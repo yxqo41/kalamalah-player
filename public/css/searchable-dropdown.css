@@ -1,0 +1,414 @@
+/* ==========================================================================
+   SearchableDropdown Component Styles (Exact WAI-ARIA & Visual Specification)
+   ========================================================================== */
+
+.sd {
+  position: relative;
+  width: 100%;
+  font-family: 'SF Arabic', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  user-select: none;
+}
+
+.sd-mirror-select {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Trigger (<div role="combobox" tabindex="0">) */
+.sd-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-height: 42px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary, #f3f5f8);
+  font-size: 13.5px;
+  line-height: 1.4;
+  cursor: pointer;
+  outline: none;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+html[data-theme="light"] .sd-trigger {
+  border-color: rgba(15, 23, 42, 0.14);
+  background: rgba(15, 23, 42, 0.035);
+  color: #0f172a;
+}
+
+.sd-trigger:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.075);
+}
+
+html[data-theme="light"] .sd-trigger:hover {
+  border-color: rgba(15, 23, 42, 0.25);
+  background: rgba(15, 23, 42, 0.06);
+}
+
+.sd.is-open .sd-trigger,
+.sd-trigger:focus-visible {
+  border-color: var(--gold, #d4af5f);
+  background: rgba(212, 175, 95, 0.06);
+  box-shadow: 0 0 0 3px rgba(212, 175, 95, 0.14);
+}
+
+.sd-value-area {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.sd-placeholder {
+  color: rgba(255, 255, 255, 0.35);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+html[data-theme="light"] .sd-placeholder {
+  color: rgba(15, 23, 42, 0.45);
+}
+
+.sd-single-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+
+/* Multi-select Removable Pill Chips */
+.sd-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  width: 100%;
+}
+
+.sd-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  line-height: 1.2;
+  padding: 3px 4px 3px 9px;
+  border-radius: 999px;
+  background: rgba(0, 196, 255, 0.14);
+  border: 1px solid rgba(0, 196, 255, 0.42);
+  color: #e0f8ff;
+}
+
+html[data-theme="light"] .sd-chip {
+  background: rgba(0, 150, 214, 0.12);
+  border-color: rgba(0, 150, 214, 0.4);
+  color: #0369a1;
+}
+
+.sd-chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0, 196, 255, 0.2);
+  color: inherit;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+
+.sd-chip-remove:hover {
+  background: rgba(0, 196, 255, 0.4);
+}
+
+/* Indicators (Clear × & 14px Chevron) */
+.sd-indicators {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.sd-clear-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.sd-clear-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.sd-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  color: rgba(255, 255, 255, 0.55);
+  transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1), color 160ms ease;
+}
+
+html[data-theme="light"] .sd-chevron {
+  color: rgba(15, 23, 42, 0.55);
+}
+
+.sd.is-open .sd-chevron {
+  transform: rotate(180deg);
+  color: var(--gold, #d4af5f);
+}
+
+/* Dropdown Panel */
+.sd-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  inset-inline-start: 0;
+  width: 100%;
+  min-width: 240px;
+  z-index: 1200;
+  background: rgba(22, 22, 26, 0.98);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: scale(0.95) translateY(-8px);
+  transform-origin: top center;
+  transition:
+    opacity 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 220ms;
+}
+
+html[data-theme="light"] .sd-panel {
+  background: rgba(252, 251, 248, 0.98);
+  border-color: rgba(15, 23, 42, 0.12);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+}
+
+.sd.is-open .sd-panel {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: scale(1) translateY(0);
+}
+
+/* Auto-flip: open upward when there is not enough space below the trigger */
+.sd.dropup .sd-panel {
+  top: auto;
+  bottom: calc(100% + 6px);
+  transform-origin: bottom center;
+}
+
+/* Search Input Bar */
+.sd-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="light"] .sd-search-wrap {
+  border-bottom-color: rgba(15, 23, 42, 0.08);
+}
+
+.sd-search-icon {
+  color: rgba(255, 255, 255, 0.45);
+  flex-shrink: 0;
+}
+
+html[data-theme="light"] .sd-search-icon {
+  color: rgba(15, 23, 42, 0.45);
+}
+
+.sd-search-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #f3f5f8;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+html[data-theme="light"] .sd-search-input {
+  color: #0f172a;
+}
+
+.sd-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+html[data-theme="light"] .sd-search-input::placeholder {
+  color: rgba(15, 23, 42, 0.42);
+}
+
+/* Options Listbox */
+.sd-listbox {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  max-height: 270px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.sd-group-label {
+  padding: 8px 10px 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+}
+
+html[data-theme="light"] .sd-group-label {
+  color: rgba(15, 23, 42, 0.45);
+}
+
+.sd-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #e9edf4;
+  cursor: pointer;
+  transition: background-color 100ms ease;
+}
+
+html[data-theme="light"] .sd-option {
+  color: #1e293b;
+}
+
+.sd-option:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+html[data-theme="light"] .sd-option:hover {
+  background: rgba(15, 23, 42, 0.04);
+}
+
+.sd-option.is-active {
+  background: rgba(212, 175, 95, 0.1);
+}
+
+.sd-option.is-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Reserved 16px space for left checkmark so labels never shift */
+.sd-check-slot {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--gold, #d4af5f);
+}
+
+.sd-option-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sd-option-label mark {
+  background: transparent;
+  color: var(--gold, #d4af5f);
+  font-weight: 600;
+}
+
+.sd-empty {
+  padding: 20px 12px;
+  text-align: center;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+html[data-theme="light"] .sd-empty {
+  color: rgba(15, 23, 42, 0.48);
+}
+
+/* Footer with tiny monospace keyboard hints */
+.sd-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 6px 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+html[data-theme="light"] .sd-footer {
+  border-top-color: rgba(15, 23, 42, 0.08);
+  background: rgba(15, 23, 42, 0.02);
+  color: rgba(15, 23, 42, 0.52);
+}
+
+.sd-footer kbd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Reduced Motion Contract */
+@media (prefers-reduced-motion: reduce) {
+  .sd-panel,
+  .sd-chevron,
+  .sd-trigger {
+    transition: none !important;
+  }
+}

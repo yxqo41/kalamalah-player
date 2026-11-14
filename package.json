@@ -1,0 +1,24 @@
+{
+  "name": "kalamalah-player",
+  "version": "1.0.0",
+  "description": "Kalamalah Quran Player & Reader with Hybrid SSR Prerendering, Mushaf Pages, and Word-by-Word Ayah Sync",
+  "type": "module",
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "dev": "bun --watch src/server/index.ts",
+    "build:client": "bun build src/client/app.ts --outdir public/js --target browser --minify",
+    "build:static": "bun run build:client && bun run src/server/static-export.ts",
+    "build": "bun run build:client",
+    "start": "bun run src/server/index.ts",
+    "prerender": "bun run src/server/prerender-cli.ts"
+  },
+  "dependencies": {
+    "gsap": "^3.12.7",
+    "hono": "^4.7.4"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.8.2"
+  }
+}

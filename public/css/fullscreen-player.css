@@ -1,0 +1,833 @@
+/* ==========================================================================
+   1:1 LyricsFlow Fullscreen Player Styles (Ported from main/css/player.css,
+   main/css/dynamic-bg.css, and main/css/lyrics.css for Quran Ayahs & Words)
+   ========================================================================== */
+
+.aml-fullscreen-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  background: #161618;
+  color: #ffffff;
+  font-family: 'Tajawal', 'SF Arabic', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  user-select: none;
+  container-type: size;
+}
+
+/* ── Dynamic Background (WebGL dybg from main/js/dybg.js) ── */
+.lyricsflow-dynamic-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  transform-origin: center center;
+  filter: saturate(1.35) brightness(0.42);
+  z-index: 0;
+  transition: filter 1s ease, opacity 0.6s ease;
+  will-change: transform, filter;
+  backface-visibility: hidden;
+}
+
+.lyricsflow-dynamic-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(8, 10, 16, 0.34) 0%, rgba(5, 7, 12, 0.72) 100%),
+    linear-gradient(180deg, rgba(6, 8, 13, 0.38) 0%, rgba(6, 8, 13, 0.28) 50%, rgba(6, 8, 13, 0.56) 100%);
+}
+
+.lyricsflow-dynamic-bg.hidden,
+.aml-islamic-bg-slideshow.hidden,
+.pc-dock-pill-btn.hidden,
+.aml-hud-toggle-btn svg.hidden {
+  display: none !important;
+}
+
+/* ── Bottom-Left Low-Opacity Hide-HUD Toggle & Cinema Mode ── */
+.aml-hud-toggle-btn {
+  position: fixed;
+  bottom: 18px;
+  left: 18px;
+  z-index: 30;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 0.5px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: rgba(255, 255, 255, 0.9);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.26;
+  transition: opacity 200ms ease, transform 150ms ease, background-color 180ms ease;
+}
+
+.aml-hud-toggle-btn:hover {
+  opacity: 0.88;
+  background: rgba(255, 255, 255, 0.18);
+  transform: scale(1.06);
+}
+
+.aml-fullscreen-overlay .pc-top-volume-bar,
+.aml-fullscreen-overlay .pc-top-left-pill-bar,
+.aml-fullscreen-overlay .NowBarProgress,
+.aml-fullscreen-overlay .NowBarControls,
+.aml-fullscreen-overlay .VolumeArea,
+.aml-fullscreen-overlay .MetadataActions,
+.aml-fullscreen-overlay .SongName {
+  transition: opacity 240ms cubic-bezier(0.22, 1, 0.36, 1), visibility 240ms ease;
+}
+
+.aml-fullscreen-overlay.hud-hidden .pc-top-volume-bar,
+.aml-fullscreen-overlay.hud-hidden .pc-top-left-pill-bar,
+.aml-fullscreen-overlay.hud-hidden .NowBarProgress,
+.aml-fullscreen-overlay.hud-hidden .NowBarControls,
+.aml-fullscreen-overlay.hud-hidden .VolumeArea {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.aml-fullscreen-overlay.hud-hidden .MetadataActions,
+.aml-fullscreen-overlay.hud-hidden .SongName {
+  display: none;
+}
+
+.aml-fullscreen-overlay.hud-hidden .MetadataRow {
+  justify-content: center;
+  text-align: center;
+}
+
+.aml-fullscreen-overlay.hud-hidden .Metadata {
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.aml-fullscreen-overlay.hud-hidden .Metadata .Artists {
+  text-align: center;
+  font-size: 1.08rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ── Moving & Cross-Fading Kaaba & Islamic Backgrounds ── */
+.aml-islamic-bg-slideshow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  background: #0d1017;
+}
+
+.aml-islamic-slide {
+  position: absolute;
+  inset: -6%;
+  width: 112%;
+  height: 112%;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  will-change: transform, opacity;
+  transition: opacity 2.2s cubic-bezier(0.22, 1, 0.36, 1);
+  filter: blur(8px) saturate(1.1) contrast(1.04) brightness(0.76);
+}
+
+.aml-islamic-slide.is-visible {
+  opacity: 1;
+}
+
+.aml-islamic-slide.kb-pan-a {
+  animation: amlKenBurnsA 22s ease-in-out infinite alternate;
+}
+
+.aml-islamic-slide.kb-pan-b {
+  animation: amlKenBurnsB 22s ease-in-out infinite alternate;
+}
+
+@keyframes amlKenBurnsA {
+  0% {
+    transform: scale3d(1.02, 1.02, 1) translate3d(0%, 0%, 0);
+  }
+  100% {
+    transform: scale3d(1.12, 1.12, 1) translate3d(-2.2%, -1.5%, 0);
+  }
+}
+
+@keyframes amlKenBurnsB {
+  0% {
+    transform: scale3d(1.1, 1.1, 1) translate3d(2%, -1%, 0);
+  }
+  100% {
+    transform: scale3d(1.02, 1.02, 1) translate3d(-1.5%, 1.8%, 0);
+  }
+}
+
+.aml-islamic-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 30% 50%, rgba(10, 14, 22, 0.48) 0%, rgba(8, 11, 18, 0.78) 100%),
+    linear-gradient(180deg, rgba(8, 10, 15, 0.72) 0%, rgba(8, 10, 15, 0.52) 50%, rgba(8, 10, 15, 0.82) 100%);
+  pointer-events: none;
+}
+
+/* ── Top-Left Close Pill & Top-Right Sync/Toggles Bar (from main/player.html) ── */
+.pc-top-left-pill-bar {
+  position: fixed;
+  top: 16px;
+  left: 18px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 0.5px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  padding: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+}
+
+.pc-pill-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.15s ease;
+}
+
+.pc-pill-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.06);
+}
+
+.aml-sheet-handle {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 5px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.28);
+  cursor: pointer;
+  z-index: 20;
+  transition: background-color 160ms ease, width 160ms ease;
+}
+
+.aml-sheet-handle:hover {
+  background: rgba(255, 255, 255, 0.55);
+  width: 56px;
+}
+
+.pc-top-volume-bar {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pc-sync-offset-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  font-variant-numeric: tabular-nums;
+}
+
+.pc-sync-btn-step {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 700;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 0;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.pc-sync-btn-step:hover {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+}
+
+.pc-sync-label {
+  padding: 0 4px;
+  min-width: 42px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.pc-dock-pill-btn {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.pc-dock-pill-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.pc-dock-pill-btn.active {
+  background: #ffffff;
+  color: #161618;
+}
+
+/* ── ContentBox & NowBar (1:1 LyricsFlow Layout) ── */
+.aml-layout.ContentBox {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: 390px 1fr;
+  gap: 48px;
+  width: 100%;
+  max-width: 1460px;
+  height: 100vh;
+  margin: 0 auto;
+  padding: 48px 44px 32px;
+  align-items: center;
+}
+
+@media (max-width: 1024px) {
+  .aml-layout.ContentBox {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 16px;
+    padding: 48px 20px 20px;
+  }
+  .pc-top-volume-bar {
+    display: none;
+  }
+}
+
+.aml-player-column.NowBar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  max-width: 390px;
+  margin: 0 auto;
+}
+
+/* ── MediaBox & Reciter Cover Art (Spring Scale on Play/Pause like LyricsFlow) ── */
+.MediaBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 310px;
+  margin: 0 auto 22px;
+}
+
+@media (max-width: 1024px) {
+  .MediaBox {
+    display: none;
+  }
+}
+
+.MediaImageContainer {
+  border-radius: 16px;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 0 calc(42vh * 0.18) rgba(0, 0, 0, 0.28), 0 12px 40px rgba(0, 0, 0, 0.45);
+  background: rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  position: relative;
+  transform: scale(1);
+  transform-origin: center;
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.MediaImageContainer.paused,
+.MediaImageContainer.is-paused {
+  transform: scale(0.82);
+  box-shadow: 0 0 calc(42vh * 0.12) rgba(0, 0, 0, 0.18), 0 6px 20px rgba(0, 0, 0, 0.28);
+}
+
+.aml-reciter-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.aml-artwork-overlay-meta {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  padding: 28px 16px 14px;
+  background: linear-gradient(to top, rgba(16, 18, 22, 0.9) 0%, rgba(16, 18, 22, 0.45) 60%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 2px;
+}
+
+.aml-card-surah-name {
+  font-family: var(--font-quran-reading);
+  font-size: 1.75rem;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.aml-card-surah-meta {
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.72);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── MetadataRow (from main/css/player.css) ── */
+.NowBarBottomWrapper {
+  width: 100%;
+}
+
+.MetadataRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 14px;
+  gap: 12px;
+}
+
+.Metadata {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+}
+
+.Metadata .SongName {
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.Metadata .Artists {
+  font-weight: 500;
+  font-size: 0.98rem;
+  color: rgba(255, 255, 255, 0.62);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.Metadata .Artists:hover {
+  color: #ffffff;
+}
+
+.MetadataActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.favorite-button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease;
+}
+
+.favorite-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.06);
+}
+
+/* ── NowBarProgress (AeroUI Elastic Slider from main/css/player.css) ── */
+.NowBarProgress {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.NowBarProgress .aero-elastic {
+  --elastic-inactive-h: 8px;
+  --elastic-active-h: 12px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.NowBarProgress .aero-elastic-track {
+  height: 8px !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  background: rgba(255, 255, 255, 0.24) !important;
+  backdrop-filter: blur(12px) saturate(170%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(170%) !important;
+  position: relative !important;
+  transition: height 150ms ease;
+}
+
+.NowBarProgress .aero-elastic:hover .aero-elastic-track {
+  height: 11px !important;
+}
+
+.NowBarProgress .aero-elastic-fill {
+  height: 100% !important;
+  border-radius: 0 !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  transition: width 100ms ease-out !important;
+}
+
+.NowBarProgress .aero-elastic-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 6px;
+}
+
+.progress-time {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.52);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── NowBarControls (AeroUI Player Buttons & Skip Labels from main/css/player.css) ── */
+.NowBarControls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.playback-control {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  padding: 0;
+}
+
+.playback-control:hover {
+  transform: scale(1.08);
+}
+
+.playback-control:active {
+  transform: scale(0.92);
+}
+
+.NowBarControls .aero-player {
+  --player-size: 56px;
+  --player-label: #ffffff;
+  width: 56px;
+  height: 56px;
+}
+
+.NowBarControls .play-pause svg {
+  width: 40px;
+  height: 40px;
+}
+
+.NowBarControls .aero-skip {
+  --skip-size: 36px;
+  color: #ffffff;
+}
+
+.playback-control.repeat img {
+  width: 26px;
+  height: 26px;
+  opacity: 0.72;
+}
+
+.playback-control.repeat.active img {
+  opacity: 1;
+}
+
+.playback-control.speed-txt {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.78);
+  font-variant-numeric: tabular-nums;
+  min-width: 36px;
+}
+
+/* ── VolumeArea (from main/css/player.css) ── */
+.VolumeArea {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.volume-side-icon {
+  width: 18px;
+  height: 18px;
+  filter: brightness(0) invert(1);
+  opacity: 0.55;
+}
+
+.volume-slider-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.volume-slider {
+  width: 100%;
+  height: 6px;
+  accent-color: #ffffff;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   LyricsContainer & LyricsContent (1:1 Port of main/css/lyrics.css)
+   Spring-physics --ty positioning, 50ms cascade stagger, & RTL gradient sweep
+   ========================================================================== */
+.aml-lyrics-column.LyricsContainer {
+  height: 100%;
+  width: 100%;
+  overflow: hidden !important;
+  position: relative !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.aml-lyrics-scroll-container.LyricsContent {
+  position: relative !important;
+  height: 100%;
+  width: 100%;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: none;
+  padding: 0 24px;
+  mask-image: linear-gradient(
+    180deg,
+    transparent 0,
+    transparent 20px,
+    #000 90px,
+    #000 calc(100% - 100px),
+    transparent calc(100% - 20px),
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    transparent 0,
+    transparent 20px,
+    #000 90px,
+    #000 calc(100% - 100px),
+    transparent calc(100% - 20px),
+    transparent
+  );
+}
+
+.aml-lyrics-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+.aml-ayahs-list.lyrics-track {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-top: 26vh;
+  padding-bottom: 65vh;
+}
+
+.aml-ayah-line {
+  position: relative;
+  padding: 14px 20px;
+  border-radius: 16px;
+  cursor: pointer;
+  transform-origin: right center;
+  opacity: 0.32;
+  transform: translate3d(0, var(--ty, 0px), 0) scale(var(--line-scale, 0.98));
+  contain: layout style;
+  transition: opacity 0.35s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.2s ease;
+}
+
+.aml-ayah-line.is-near-viewport {
+  will-change: transform;
+  filter: blur(var(--blur-amount, 0px));
+}
+
+.aml-lyrics-scroll-container.HideLineBlur .aml-ayah-line,
+.aml-lyrics-scroll-container:hover .aml-ayah-line {
+  --blur-amount: 0px !important;
+  filter: none !important;
+}
+
+.aml-ayah-line:hover:not(.Active) {
+  opacity: 0.88 !important;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.aml-ayah-line.Sung {
+  opacity: 0.38;
+}
+
+.aml-ayah-line.Active {
+  opacity: 1 !important;
+  filter: none !important;
+  --line-scale: 1;
+}
+
+.aml-ayah-line.Active.line-sync-mode {
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.aml-ayah-arabic {
+  font-size: clamp(1.9rem, 3vw, 2.85rem);
+  line-height: 2.1;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: right;
+  direction: rtl;
+}
+
+/* 1:1 LyricsFlow RTL Word Sweep (--gradient-position -20% -> 100% + --word-y -3px lift) */
+.aml-word {
+  display: inline-block;
+  padding: 0 2px;
+  border-radius: 6px;
+  --gradient-position: -20%;
+  --word-y: 0px;
+  transform: translate3d(0, var(--word-y), 0);
+  color: rgba(255, 255, 255, 0.38);
+  transition: color 120ms ease;
+}
+
+.aml-ayah-line.Active:not(.line-sync-mode) .aml-word:not(:has(.tj-char)) {
+  background-image: linear-gradient(
+    -90deg,
+    rgba(255, 255, 255, 1) var(--gradient-position, -20%),
+    rgba(255, 255, 255, 0.36) calc(var(--gradient-position, -20%) + 22%)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.aml-ayah-line.Active.line-sync-mode .aml-word,
+.aml-ayah-line.Active .aml-word:has(.tj-char) {
+  color: #ffffff;
+}
+
+.aml-ayah-line.Sung .aml-word {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.aml-ayah-num-end {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.62em !important;
+  height: 2.62em !important;
+  min-width: 2.62em !important;
+  min-height: 2.62em !important;
+  max-width: 2.62em !important;
+  max-height: 2.62em !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  border: 1.5px solid rgba(214, 187, 138, 0.55);
+  background: rgba(255, 255, 255, 0.06);
+  font-family: 'Kitab', serif !important;
+  color: rgba(214, 187, 138, 0.95);
+  font-size: 0.54em !important;
+  line-height: 1;
+  vertical-align: middle;
+  margin-inline-start: 8px;
+  box-sizing: border-box;
+}
+
+.aml-ayah-translation {
+  margin: 8px 0 0;
+  font-size: 1.02rem;
+  font-weight: 500;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 65ch;
+  transition: opacity 0.35s ease;
+}
+
+.aml-ayah-line.NotSung .aml-ayah-translation {
+  opacity: 0.45;
+}
+
+.aml-ayah-line.Active .aml-ayah-translation {
+  color: rgba(255, 255, 255, 0.9);
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aml-ayah-line,
+  .aml-word,
+  .MediaImageContainer {
+    transition: none !important;
+    filter: none !important;
+    transform: none !important;
+  }
+}

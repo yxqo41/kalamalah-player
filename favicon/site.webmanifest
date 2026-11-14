@@ -1,0 +1,108 @@
+{
+  "id": "https://kalamalah.com/",
+  "name": "Kalamalah | القرآن الكريم",
+  "short_name": "Kalamalah",
+  "description": "منصة كلام الله لتلاوة وتدبر القرآن الكريم مع المزامنة الدقيقة للآيات والكلمات، المصحف الشريف، التفسير، وأحكام التجويد",
+  "start_url": "/",
+  "scope": "/",
+  "dir": "rtl",
+  "lang": "ar",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "theme_color": "#090d16",
+  "background_color": "#090d16",
+  "categories": ["quran", "books", "education", "lifestyle"],
+  "prefer_related_applications": false,
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://kalamalah.com/favicon/site.webmanifest"
+    },
+    {
+      "platform": "play",
+      "url": "https://github.com/yxqo41/kalamalah-mobile/releases/latest",
+      "id": "com.kalamalah.mobile"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/favicon/favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/favicon/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/favicon/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/round-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "سور القرآن الكريم",
+      "short_name": "السور",
+      "description": "تصفح واستمع إلى سور القرآن الكريم",
+      "url": "/#view-surah",
+      "icons": [{ "src": "/favicon/web-app-manifest-192x192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "القراء والتلاوات",
+      "short_name": "القراء",
+      "description": "استمع لنخبة من قراء القرآن الكريم مع التزامن النصي",
+      "url": "/reciters",
+      "icons": [{ "src": "/favicon/web-app-manifest-192x192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "المصحف الشريف (صفحات)",
+      "short_name": "المصحف",
+      "description": "تصفح صفحات المصحف الشريف من الصفحة 1 إلى 604",
+      "url": "/mushaf-1",
+      "icons": [{ "src": "/favicon/web-app-manifest-192x192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "أجزاء القرآن الكريم",
+      "short_name": "الأجزاء",
+      "description": "تصفح الأجزاء الثلاثين والأحزاب والأرباع",
+      "url": "/#view-juz",
+      "icons": [{ "src": "/favicon/web-app-manifest-192x192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}

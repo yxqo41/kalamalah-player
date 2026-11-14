@@ -1,0 +1,11 @@
+/main/
+/.agents/
+/kalamalah-quran-api.json
+/kalamalah-logo-normal.jpg
+node_modules/
+.cache/
+dist/
+/kalamalah-logo-nobg.png
+/round-logo.png
+/non-round-logo.png
+pnpm-lock.yaml
