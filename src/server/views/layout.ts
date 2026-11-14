@@ -35,11 +35,164 @@ export function escapeHtml(str: string): string {
     .replace(/'/g, '&#39;');
 }
 
+function buildDiscordComponentEmbedJson(
+  title: string,
+  description: string,
+  canonicalUrl: string
+): string {
+  const safeTitle = title.trim().slice(0, 140) || 'Kalamalah | القرآن الكريم';
+  const safeDesc = description.trim().slice(0, 260);
+  const payload = {
+    component: {
+      type: 17,
+      accent_color: 13149277,
+      components: [
+        { type: 10, content: '-# KALAMALAH · كلام الله' },
+        {
+          type: 9,
+          components: [
+            {
+              type: 10,
+              content: `# ${safeTitle}\n${safeDesc}`,
+            },
+          ],
+          accessory: {
+            type: 11,
+            media: { url: 'https://kalamalah.com/images/round-logo.png' },
+            description: 'Kalamalah logo',
+          },
+        },
+        {
+          type: 12,
+          items: [
+            {
+              media: { url: 'https://kalamalah.com/images/og-cover.jpg' },
+              description: 'Kalamalah — Holy Quran Player & Reader',
+            },
+          ],
+        },
+        { type: 14, spacing: 1 },
+        {
+          type: 9,
+          components: [
+            {
+              type: 10,
+              content: '**Open in Kalamalah**\n-# Listen, read, and reflect with synchronized Ayah & word playback.',
+            },
+          ],
+          accessory: {
+            type: 2,
+            style: 5,
+            url: canonicalUrl,
+            label: 'Open Page',
+          },
+        },
+        {
+          type: 9,
+          components: [
+            {
+              type: 10,
+              content: '**Reciters & Mushaf**\n-# Browse reciters, 604 Mushaf pages, Tafseer, and Tajweed.',
+            },
+          ],
+          accessory: {
+            type: 2,
+            style: 5,
+            url: 'https://kalamalah.com/reciters',
+            label: 'Browse Reciters',
+          },
+        },
+      ],
+    },
+  };
+  return JSON.stringify(payload).replace(/</g, '\\u003c');
+}
+
+function buildStructuredDataJson(
+  title: string,
+  description: string,
+  canonicalUrl: string
+): string {
+  const schema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        '@id': 'https://kalamalah.com/#website',
+        url: 'https://kalamalah.com/',
+        name: 'Kalamalah',
+        alternateName: 'كلام الله',
+        description:
+          'Holy Quran player and reader with word-by-word and ayah audio synchronization, 604-page Mushaf, Tafseer, translations, and Tajweed tools.',
+        inLanguage: ['ar', 'en', 'fr', 'tr', 'id', 'ur'],
+      },
+      {
+        '@type': 'WebPage',
+        '@id': `${canonicalUrl}#webpage`,
+        url: canonicalUrl,
+        name: title,
+        description,
+        isPartOf: { '@id': 'https://kalamalah.com/#website' },
+        primaryImageOfPage: {
+          '@type': 'ImageObject',
+          url: 'https://kalamalah.com/images/og-cover.jpg',
+          width: 1200,
+          height: 670,
+        },
+      },
+    ],
+  };
+  return JSON.stringify(schema).replace(/</g, '\\u003c');
+}
+
+export function buildRobotsTxt(baseUrl = 'https://kalamalah.com'): string {
+  const origin = baseUrl.replace(/\/+$/, '');
+  return `User-agent: *\nAllow: /\n\nSitemap: ${origin}/sitemap.xml\n`;
+}
+
+export function buildSitemapXml(baseUrl = 'https://kalamalah.com'): string {
+  const origin = baseUrl.replace(/\/+$/, '');
+  const urls: { path: string; priority: string; changefreq: string }[] = [
+    { path: '/', priority: '1.0', changefreq: 'weekly' },
+    { path: '/reciters', priority: '0.9', changefreq: 'weekly' },
+    { path: '/mushaf-1', priority: '0.9', changefreq: 'monthly' },
+    { path: '/tajweed', priority: '0.8', changefreq: 'monthly' },
+    { path: '/languages', priority: '0.8', changefreq: 'monthly' },
+    { path: '/duas', priority: '0.8', changefreq: 'monthly' },
+    { path: '/names', priority: '0.8', changefreq: 'monthly' },
+    { path: '/ai', priority: '0.7', changefreq: 'monthly' },
+  ];
+
+  for (const s of SURAHS_META) {
+    urls.push({ path: `/surah-${s.number}`, priority: '0.9', changefreq: 'monthly' });
+  }
+  for (let j = 1; j <= 30; j++) {
+    urls.push({ path: `/juz-${j}`, priority: '0.7', changefreq: 'monthly' });
+  }
+  for (const r of RECITERS_CATALOG) {
+    urls.push({ path: `/reciter-${r.slug}`, priority: '0.8', changefreq: 'monthly' });
+  }
+  for (const b of TAFSEER_BOOKS) {
+    urls.push({ path: `/tafseer-${b.id}`, priority: '0.7', changefreq: 'monthly' });
+  }
+
+  const items = urls
+    .map(
+      (u) =>
+        `  <url><loc>${origin}${u.path}</loc><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`
+    )
+    .join('\n');
+
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${items}\n</urlset>\n`;
+}
+
 export function renderLayout(props: LayoutProps): string {
   const description =
     props.description ??
-    'منصة كلام الله (Kalamalah Player): تلاوة وتدبر القرآن الكريم مع المزامنة الدقيقة للآيات والكلمات، المصحف الشريف، التفسير، وأحكام التجويد.';
+    'منصة كلام الله (Kalamalah): تلاوة وتدبر القرآن الكريم مع المزامنة الدقيقة للآيات والكلمات، المصحف الشريف، التفسير، وأحكام التجويد.';
   const canonicalUrl = `https://kalamalah.com${props.canonicalPath ?? '/'}`;
+  const discordEmbedJson = buildDiscordComponentEmbedJson(props.title, description, canonicalUrl);
+  const structuredDataJson = buildStructuredDataJson(props.title, description, canonicalUrl);
 
   const clientCatalogBootstrap = {
     surahs: SURAHS_META.map((s) => ({
@@ -78,24 +231,62 @@ export function renderLayout(props: LayoutProps): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>${escapeHtml(props.title)}</title>
   <meta name="description" content="${escapeHtml(description)}" />
+  <meta name="keywords" content="Quran, Holy Quran, Kalamalah, كلام الله, القرآن الكريم, Mushaf, Tafseer, Tajweed, Reciters, Ayah Sync, Word by Word Quran" />
+  <meta name="author" content="Kalamalah" />
+  <meta name="application-name" content="Kalamalah" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <link rel="canonical" href="${escapeHtml(canonicalUrl)}" />
-  <meta name="theme-color" content="#0b101b" />
+  <link rel="alternate" hreflang="x-default" href="${escapeHtml(canonicalUrl)}" />
+  <meta name="theme-color" content="#c8a45d" />
+  <meta name="darkreader-lock" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="format-detection" content="telephone=no" />
 
   <!-- Exact Favicon Setup -->
   <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
   <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
   <link rel="shortcut icon" href="/favicon/favicon.ico" />
+  <link rel="mask-icon" href="/favicon/favicon.svg" color="#c8a45d" />
+  <link rel="apple-touch-icon" sizes="76x76" href="/favicon/apple-touch-icon.png" />
+  <link rel="apple-touch-icon" sizes="120x120" href="/favicon/apple-touch-icon.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="/favicon/apple-touch-icon.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
   <meta name="apple-mobile-web-app-title" content="Kalamalah" />
   <link rel="manifest" href="/favicon/site.webmanifest" />
 
-  <!-- Open Graph & Social -->
+  <!-- Open Graph & Social (WhatsApp, Telegram, Facebook, LinkedIn, iMessage, Discord fallback) -->
   <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Kalamalah | كلام الله" />
   <meta property="og:url" content="${escapeHtml(canonicalUrl)}" />
   <meta property="og:title" content="${escapeHtml(props.title)}" />
   <meta property="og:description" content="${escapeHtml(description)}" />
-  <meta property="og:image" content="https://kalamalah.com/images/logo.jpg" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ar_AR" />
+  <meta property="og:locale:alternate" content="fr_FR" />
+  <meta property="og:locale:alternate" content="tr_TR" />
+  <meta property="og:locale:alternate" content="id_ID" />
+  <meta property="og:locale:alternate" content="ur_PK" />
+  <meta property="og:image" content="https://kalamalah.com/images/og-cover.jpg" />
+  <meta property="og:image:secure_url" content="https://kalamalah.com/images/og-cover.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="670" />
+  <meta property="og:image:alt" content="Kalamalah — Holy Quran Player & Reader" />
+
+  <!-- Twitter / X Cards -->
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:domain" content="kalamalah.com" />
+  <meta name="twitter:url" content="${escapeHtml(canonicalUrl)}" />
+  <meta name="twitter:title" content="${escapeHtml(props.title)}" />
+  <meta name="twitter:description" content="${escapeHtml(description)}" />
+  <meta name="twitter:image" content="https://kalamalah.com/images/og-cover.jpg" />
+  <meta name="twitter:image:alt" content="Kalamalah — Holy Quran Player & Reader" />
+
+  <!-- Discord Component Embed (v2) + Google Search Structured Data (JSON-LD) -->
+  <script id="discord:component-embed" type="application/json">${discordEmbedJson}</script>
+  <script type="application/ld+json">${structuredDataJson}</script>
 
   <!-- Local Fonts from /fonts (UthmanicHafs_V22 Primary, KFGQPCNastaleeq, SF Arabic, SF Pro Display) -->
   <link rel="preload" href="/fonts/UthmanicHafs_V22.woff2" as="font" type="font/woff2" crossorigin />

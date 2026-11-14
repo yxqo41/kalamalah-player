@@ -24,6 +24,7 @@ import {
   renderTajweedGuidePage,
 } from './views/juz-tafseer';
 import { renderMushafPageView } from './views/mushaf';
+import { buildRobotsTxt, buildSitemapXml } from './views/layout';
 import { renderNotFoundPage } from './views/not-found';
 import { renderReciterProfilePage, renderRecitersDirectoryPage } from './views/reciters';
 import { renderSurahPage } from './views/surah';
@@ -475,6 +476,20 @@ app.get('/api/tafseer/:bookId/:surah/:ayah', async (c) => {
 // ============================================================================
 // 3. SMART PHP-STYLE SSR & PRERENDERED ROUTES
 // ============================================================================
+
+app.get('/robots.txt', (c) => {
+  return c.text(buildRobotsTxt(), 200, {
+    'Content-Type': 'text/plain; charset=utf-8',
+    'Cache-Control': 'public, max-age=86400',
+  });
+});
+
+app.get('/sitemap.xml', (c) => {
+  return c.body(buildSitemapXml(), 200, {
+    'Content-Type': 'application/xml; charset=utf-8',
+    'Cache-Control': 'public, max-age=86400',
+  });
+});
 
 // Home Page
 app.get('/', async (c) => {

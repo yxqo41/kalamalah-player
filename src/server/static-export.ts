@@ -11,7 +11,7 @@ import {
   renderTafseerPageView,
   renderTajweedGuidePage,
 } from './views/juz-tafseer';
-import { renderLayout } from './views/layout';
+import { buildRobotsTxt, buildSitemapXml, renderLayout } from './views/layout';
 import { renderMushafPageView } from './views/mushaf';
 import { renderReciterProfilePage, renderRecitersDirectoryPage } from './views/reciters';
 import { renderSurahPage } from './views/surah';
@@ -56,11 +56,14 @@ async function runStaticExport(): Promise<void> {
     await cp(MAIN_ICONS_DIR, join(DIST_DIR, 'icons'), { recursive: true });
   }
 
-  // 2. GitHub Pages config files
+  // 2. GitHub Pages config & SEO files
   await writeFile(join(DIST_DIR, '.nojekyll'), '', 'utf8');
   if (CUSTOM_DOMAIN) {
     await writeFile(join(DIST_DIR, 'CNAME'), `${CUSTOM_DOMAIN}\n`, 'utf8');
   }
+  const siteBaseUrl = CUSTOM_DOMAIN ? `https://${CUSTOM_DOMAIN}` : 'https://kalamalah.com';
+  await writeFile(join(DIST_DIR, 'robots.txt'), buildRobotsTxt(siteBaseUrl), 'utf8');
+  await writeFile(join(DIST_DIR, 'sitemap.xml'), buildSitemapXml(siteBaseUrl), 'utf8');
 
   // 3. Smart SPA/Slug Fallback 404.html (handles any dynamic slug via static-router.ts)
   const fallback404 = renderLayout({
